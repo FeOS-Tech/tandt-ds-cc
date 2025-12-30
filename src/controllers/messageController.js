@@ -725,9 +725,9 @@ class MessageController {
       const ticketNumber = await this.saveBookingToMongo(user, session)
 
       // Send confirmation
-      const confirmation = `🎉 *Service request submitted successfully!*\n\n📋 *Ticket:* ${
+      const confirmation = `🎉 *Service request submitted successfully!*\n\n📋 *Ref Number:* ${
         ticketNumber || 'TI-' + Date.now().toString().slice(-8)
-      }\n\nOur backend team will confirm the visit date/ time and our technician will call you before the visit.\n\nThank you for choosing Track and Trail, Doorstep Cycle Care.! 🚴‍♂️`
+      }\n\nOur backend team will confirm the visit date and time, and our technician will call you before the visit.\n\n Thank you for choosing Track & Trail Doorstep Cycle Care.🚴‍♂️`
 
       await whatsappService.sendTextMessage(user.phoneNumber, confirmation)
 
