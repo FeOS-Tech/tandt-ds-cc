@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 require('dotenv').config(); 
 const logger = require('../utils/logger');
+const counterSchema = require('../models/counter')
 
 class MongoService {
   constructor() {
@@ -26,6 +27,7 @@ class MongoService {
     connection.on('error', (err) => {
       logger.error('MongoService connection error:', err);
     });
+this.models.Counter = connection.model('Counter', counterSchema)
 
 
   const userMasterSchema = new mongoose.Schema({
@@ -51,7 +53,6 @@ class MongoService {
         type: String, 
         required: true,
         unique: true,
-        default: () => `TI-${Date.now().toString().slice(-8)}-${Math.random().toString(36).substr(2, 4).toUpperCase()}`
       },
       brandName: { type: String, default: null },
       issueType: { type: String, default: null },
@@ -101,6 +102,17 @@ class MongoService {
     logger.info('MongoDB Service initialized with ti_easy_service database');
   }
 
+
+  async generateTicketNumber() {
+  const counter = await this.models.Counter.findOneAndUpdate(
+    { _id: 'service_request' },
+    { $inc: { seq: 1 } },
+    { new: true, upsert: true }
+  )
+
+  return `SR${String(counter.seq).padStart(7, '0')}`
+}
+
   // User Master Methods
   async createOrUpdateUserMaster(phoneNumber, userData) {
     try {
@@ -127,7 +139,14 @@ class MongoService {
   // Issue Master Methods
   async createIssueMaster(issueData) {
     try {
-      const issue = new this.models.IssueMaster(issueData);
+      // const issue = new this.models.IssueMaster(issueData);
+      const ticketNumber = await this.generateTicketNumber()
+
+const issue = new this.models.IssueMaster({
+  ...issueData,
+  ticketNumber
+})
+
       await issue.save();
       logger.info('IssueMaster created:', { ticketNumber: issue.ticketNumber });
       return issue;
