@@ -732,17 +732,19 @@ class MessageController {
       await whatsappService.sendTextMessage(user.phoneNumber, confirmation)
 
       // Clear session
-      this.clearUserSession(user.phoneNumber)
+      //this.clearUserSession(user.phoneNumber)
     } else if (text === 'summary_cancel') {
       await whatsappService.sendTextMessage(
         user.phoneNumber,
         '❌ *Booking Cancelled*\n\nYour service request has been cancelled.\n\n🚲'
       )
 
-      await this.resetToStep(user, this.STEPS.WELCOME)
+      //await this.resetToStep(user, this.STEPS.WELCOME)
 
-      this.clearUserSession(user.phoneNumber)
+      //this.clearUserSession(user.phoneNumber)
     }
+    await this.resetToStep(user, this.STEPS.WELCOME)
+    this.clearUserSession(user.phoneNumber)
   }
 
   async handleUnknownStep (user, text) {
@@ -778,7 +780,7 @@ class MessageController {
   }
 
   async sendWelcomeMessage (user) {
-    console.log('the user displayname is ' + user.displayName)
+    console.log('INSIDE SENDWELCOMEMSG the user displayname is ' + user.displayName)
     const userName =
       user.displayName !== 'Customer' ? user.displayName : 'there'
     await whatsappService.sendTextMessage(
