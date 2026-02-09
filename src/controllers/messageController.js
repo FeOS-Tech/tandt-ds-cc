@@ -743,8 +743,8 @@ class MessageController {
 
       //this.clearUserSession(user.phoneNumber)
     }
-    await this.resetToStep(user, this.STEPS.WELCOME)
-    this.clearUserSession(user.phoneNumber)
+      await this.resetToStep(user, this.STEPS.WELCOME)
+      this.clearUserSession(user.phoneNumber)
   }
 
   async handleUnknownStep (user, text) {
