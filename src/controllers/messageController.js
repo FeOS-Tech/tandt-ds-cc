@@ -825,15 +825,6 @@ class MessageController {
         user.phoneNumber,
         '❌ *Booking Cancelled*\n\nYour service request has been cancelled.\n\n🚲'
       )
-<<<<<<< Updated upstream
-
-      //await this.resetToStep(user, this.STEPS.WELCOME)
-
-=======
- 
-      //await this.resetToStep(user, this.STEPS.WELCOME)
- 
->>>>>>> Stashed changes
       //this.clearUserSession(user.phoneNumber)
     }
       await this.resetToStep(user, this.STEPS.WELCOME)
