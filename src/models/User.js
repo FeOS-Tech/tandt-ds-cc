@@ -1,12 +1,16 @@
 const mongoose = require('mongoose');
-
+ 
 /* ------------------ SERVICE REQUEST ------------------ */
 const serviceRequestSchema = new mongoose.Schema({
-  brand: {
+  category: {
     type: String,
     trim: true
   },
-  issue: {
+  // issue: {
+  //   type: String,
+  //   trim: true
+  // }
+  service: {
     type: String,
     trim: true
   },
@@ -34,7 +38,7 @@ const serviceRequestSchema = new mongoose.Schema({
     default: Date.now
   }
 }, { _id: false });
-
+ 
 /* ------------------ USER SCHEMA ------------------ */
 const userSchema = new mongoose.Schema({
   phoneNumber: {
@@ -44,43 +48,43 @@ const userSchema = new mongoose.Schema({
     index: true,
     trim: true
   },
-
+ 
   displayName: {
     type: String,
     default: 'Customer'
   },
-
+ 
   /* ---------- STEP TRACKING ---------- */
   conversationStep: {
     type: Number,
     default: 0,
     index: true
   },
-
+ 
   conversationState: {
     type: String,
     default: 'new'
   },
-
+ 
   /* ---------- CURRENT BOOKING ---------- */
   currentRequest: {
     type: serviceRequestSchema,
     default: {}
   },
-
+ 
   /* ---------- BOOKING HISTORY ---------- */
   serviceHistory: {
     type: [serviceRequestSchema],
     default: []
   },
-
+ 
   /* ---------- CONSENT ---------- */
   consentGiven: {
     type: Boolean,
     default: false
   },
   consentTimestamp: Date,
-
+ 
   /* ---------- INTERACTION ---------- */
   messageCount: {
     type: Number,
@@ -92,7 +96,7 @@ const userSchema = new mongoose.Schema({
     index: true
   },
   lastMessage: String,
-
+ 
   /* ---------- META ---------- */
   createdAt: {
     type: Date,
@@ -103,20 +107,20 @@ const userSchema = new mongoose.Schema({
     default: Date.now
   }
 });
-
+ 
 /* ------------------ HOOKS ------------------ */
 userSchema.pre('save', function (next) {
   this.updatedAt = new Date();
   next();
 });
-
+ 
 /* ------------------ STEP → STATE ------------------ */
 userSchema.methods.getStateFromStep = function () {
   const map = {
     0: 'welcome',
     1: 'consent',
-    2: 'brand',
-    3: 'issue',
+    2: 'category',
+    3: 'service',
     4: 'slot',
     5: 'location',
     6: 'summary',
@@ -124,5 +128,5 @@ userSchema.methods.getStateFromStep = function () {
   };
   return map[this.conversationStep] || 'new';
 };
-
+ 
 module.exports = mongoose.model('User', userSchema);

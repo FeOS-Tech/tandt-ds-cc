@@ -28,25 +28,6 @@ app.get('/webhook', (req, res) => {
   }
 });
 
-// app.post('/webhook', async (req, res) => {
-//   try {
-//     console.log('📩 Webhook received');
-    
-//     const entry = req.body.entry?.[0];
-//     const changes = entry?.changes?.[0];
-//     const value = changes?.value;
-    
-//     if (value?.messages) {
-//       const message = value.messages[0];
-//       await messageController.handleMessage(message);
-//     }
-    
-//     res.sendStatus(200);
-//   } catch (error) {
-//     console.error('❌ Webhook processing error:', error);
-//     res.sendStatus(500);
-//   }
-// });
 
 app.post('/webhook', async (req, res) => {
   try {
