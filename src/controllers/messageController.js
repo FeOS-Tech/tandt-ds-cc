@@ -559,10 +559,10 @@ class MessageController {
 
 async handleStep5(user, message) {
   const session = this.getUserSession(user.phoneNumber)
-
+  console.log('The MESSAGE JSON is ' + JSON.stringify(message))
   if (message.type === "location") {
     const locationData = {
-      address: message.location.address || message.location.name || "Shared Location",
+      address: message.location.name + `|` + message.location.address || message.location.name || "Shared Location",
       coordinates: [message.location.longitude, message.location.latitude]
     }
 
@@ -815,12 +815,15 @@ async sendCategoryMessage(user) {
       this.serviceMap[session.selectedService] || session.selectedService
     const slotTime = session.selectedSlots?.[0]?.displayShort || 'Not selected'
     const location = session.location?.address || 'Not provided'
+    const parts = location.split(`|`)[1].split(`,`).map(s => s.trim());
+    const formattedLocation = location.split(`|`)[0].trim() + `\n` + parts.slice(0,3).join(`,`) + '\n' + parts.slice(3,5).join(`,`);
+
  
     const summary = `📋 *Booking Summary*\n
-🚲 *Category:* ${categoryName}
+🚲 *Category    :* ${categoryName}
 🔧 *Service Type:* ${serviceName}  
-📅 *Preferred Date/Time:* ${slotTime}
-📍 *Address:* ${location}
+📅 *Date/Time   :* ${slotTime}
+📍 *Address     :* ${formattedLocation}
  
 *Please choose:*`
  
