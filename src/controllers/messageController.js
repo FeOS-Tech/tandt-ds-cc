@@ -292,9 +292,16 @@ class MessageController {
       text.includes('hello') ||
       text.includes('start')
     ) {
+      const userName =
+      user.displayName !== 'Customer' ? user.displayName : 'there'
+      await whatsappService.sendTextMessage(
+        user.phoneNumber,
+        `*Dear ${userName},*\n\nWelcome to Track & Trail Service@Home \n`
+        
+      )
       await this.updateUserStep(user, this.STEPS.CONSENT)
       await this.sendStepMessage(user, this.STEPS.CONSENT)
-    } else {
+      } else {
       const userName =
       user.displayName !== 'Customer' ? user.displayName : 'there'
       await whatsappService.sendTextMessage(
