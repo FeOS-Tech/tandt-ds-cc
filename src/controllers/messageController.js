@@ -204,11 +204,7 @@ class MessageController {
     try {
       const sessionId = this.getSessionId(user.phoneNumber)
  
-      // Start activity if this is step 0
-      // if (step === 0) {
-      //   await mongoService.startUserActivity(user.phoneNumber, sessionId);
-      // }
- 
+      
       await mongoService.startUserActivity(user.phoneNumber, sessionId)
       // Log the step
       await mongoService.logStepActivity(user.phoneNumber, step, sessionId)
@@ -359,24 +355,7 @@ class MessageController {
     // Step 2: Category Selection
     const session = this.getUserSession(user.phoneNumber)
  
-    // Map input to brand - UPDATED with others handling
-    // const brandMap = {
-    //   brand_montra: 'montra',
-    //   brand_bsa: 'bsa',
-    //   brand_hercules: 'hercules',
-    //   brand_mach_city: 'mach_city',
-    //   brand_others: 'others', // NEW: Handle others selection
-    //   montra: 'montra',
-    //   bsa: 'bsa',
-    //   hercules: 'hercules',
-    //   mach_city: 'mach_city',
-    //   others: 'others', // NEW: Direct input
-    //   1: 'montra',
-    //   2: 'bsa',
-    //   3: 'hercules',
-    //   4: 'mach_city',
-    //   5: 'others' // NEW: If using numbers
-    // }
+    
     const categoryMap = {
       category_bicycle: 'bicycle',
       category_e_cycle: 'e_cycle',
@@ -406,181 +385,8 @@ class MessageController {
         '⚠️ Please select a category from the list above.'
       )
     }
- 
- 
- 
-    // Check if user selected "others"
-    // if (selectedBrand === 'others' || text === 'brand_others') {
-    //   // Ask user to specify custom brand
-    //   await whatsappService.sendTextMessage(
-    //     user.phoneNumber,
-    //     "🚴‍♂️ *Please specify your other cycle brand:*\n\n (e.g., 'Hero', 'Atlas', 'Firefox', 'Avon', etc.)"
-    //   )
- 
-    //   // Set intermediate state to wait for brand input
-    //   session.waitingForCustomBrand = true
-    //   session.pendingStep = this.STEPS.ISSUE // Store next step to go to
- 
-    //   // Don't update main step yet - stay in brand selection
-    //   console.log(
-    //     `User ${user.phoneNumber} selected "others", waiting for custom brand input`
-    //   )
-    //   return
-    // }
- 
-    // // Handle predefined brands
-    // if (selectedBrand && this.brandMap[selectedBrand]) {
-    //   session.selectedBrand = selectedBrand
-    //   session.customBrand = null // Clear any previous custom brand
-    //   user.currentRequest = user.currentRequest || {}
-    //   user.currentRequest.brand = selectedBrand
- 
-    //   // Clear waiting state if exists
-    //   session.waitingForCustomBrand = false
-    //   session.pendingStep = null
- 
-    //   await this.updateUserStep(user, this.STEPS.ISSUE)
-    //   await this.sendStepMessage(user, this.STEPS.ISSUE)
- 
-    //   console.log(`Brand selected for ${user.phoneNumber}: ${selectedBrand}`)
-    // } else {
-    //   // Check if user is in custom brand input mode
-    //   if (session.waitingForCustomBrand) {
-    //     await this.handleCustomBrandInput(user, text)
-    //   } else {
-    //     // Invalid selection
-    //     await whatsappService.sendTextMessage(
-    //       user.phoneNumber,
-    //       '⚠️ Please select a brand from the list above or type the brand name.'
-    //     )
-    //   }
-    // }
   }
-  // New HANDLE STEP 2 END
-  // NEW HANDLE MESSAGE STARTS
-  // async handleCustomBrandInput (user, text) {
-  //   const session = this.getUserSession(user.phoneNumber)
- 
-  //   try {
-  //     // Validate brand input
-  //     if (!text || text.trim().length === 0) {
-  //       await whatsappService.sendTextMessage(
-  //         user.phoneNumber,
-  //         "❌ Please enter a valid brand name.\n\nType your cycle brand (e.g., 'Hero Cycles', 'Atlas', 'Firefox'):"
-  //       )
-  //       return
-  //     }
- 
-  //     const customBrand =
-  //       text.trim().charAt(0).toUpperCase() + text.trim().slice(1).toLowerCase()
- 
-  //     // Validate length
-  //     if (customBrand.length > 15) {
-  //       await whatsappService.sendTextMessage(
-  //         user.phoneNumber,
-  //         '❌ Brand name is too long. Please enter a shorter brand name (max 15 characters):'
-  //       )
-  //       return
-  //     }
- 
-  //     // Store custom brand
-  //     session.selectedBrand = customBrand
-  //     //session.customBrand = customBrand;
-  //     user.currentRequest = user.currentRequest || {}
-  //     //user.currentRequest.brand = 'custom';
-  //     //user.currentRequest.customBrand = customBrand;
- 
-  //     // Clear waiting state
-  //     session.waitingForCustomBrand = false
- 
-  //     // Send confirmation
-  //     await whatsappService.sendTextMessage(
-  //       user.phoneNumber,
-  //       `✅ *Brand recorded:* ${customBrand}`
-  //     )
- 
-  //     // Move to next step
-  //     const nextStep = session.pendingStep || this.STEPS.ISSUE
-  //     await this.updateUserStep(user, nextStep)
-  //     await this.sendStepMessage(user, nextStep)
- 
-  //     console.log(`Custom brand saved for ${user.phoneNumber}: ${customBrand}`)
- 
-  //     // Clear pending step
-  //     session.pendingStep = null
-  //   } catch (error) {
-  //     console.error(
-  //       `Error handling custom brand for ${user.phoneNumber}:`,
-  //       error
-  //     )
-  //     await whatsappService.sendTextMessage(
-  //       user.phoneNumber,
-  //       '❌ Sorry, there was an error saving your brand. Please try again.'
-  //     )
-  //   }
-  // }
- 
- 
-  // async handleStep3 (user, text) {
-  //   const session = this.getUserSession(user.phoneNumber)
- 
-  //   console.log('Service selection received:', text)
- 
-  //   // Map button responses to issue categories
-  //   const issueMap = {
-  //     issue_regular_ser: 'regular_ser',
-  //     issue_brake_issue: 'brake_issue',
-  //     issue_wheel_issue: 'wheel_issue',
-  //     issue_drive_issue: 'drive_issue',
-  //     issue_bearing_issue: 'bearing_issue',
- 
-  //     // Alternative inputs (if user types)
-  //     regular: 'issue_regular_ser',
-  //     brake: 'issue_brake_issue',
-  //     braking: 'issue_brake_issue',
-  //     wheel: 'issue_wheel_issue',
-  //     tyre: 'issue_wheel_issue',
-  //     drive: 'drive_issue',
-  //     drivetrain: 'drive_issue',
-  //     bearing: 'bearing_issue',
-  //     rotation: 'bearing_issue',
-  //     other: 'other',
- 
-  //     // Numeric shortcuts (optional)
-  //     1: 'regular_ser',
-  //     2: 'brake_issue',
-  //     3: 'wheel_issue',
-  //     4: 'drive_issue',
-  //     5: 'bearing_issue'
-  //   }
- 
-  //   const selectedService = issueMap[text]
- 
-  //   if (selectedService) {
-  //     session.selectedService = selectedService
-  //     user.currentRequest.issue = selectedService
- 
-  //     // Get display name for the selected category
-  //     const issueDisplayName = this.getIssueDisplayName(selectedIssue)
- 
-  //     // Confirm selection and move to slots
-  //     await whatsappService.sendTextMessage(
-  //       user.phoneNumber,
-  //       `✅ Selected: ${issueDisplayName}\n`
-  //     )
- 
-  //     await this.updateUserStep(user, this.STEPS.SLOT)
-  //     await this.sendSlotMessage(user)
-  //   } else {
-  //     // Invalid selection
-  //     await whatsappService.sendTextMessage(
-  //       user.phoneNumber,
-  //       'Please select an issue category using the buttons above.'
-  //     )
-  //     await this.sendIssueMessage(user)
-  //   }
-  // }
- 
+   
   async handleStep3(user, text) {
     const session = this.getUserSession(user.phoneNumber)
  
@@ -606,11 +412,7 @@ class MessageController {
  
       const serviceDisplayName = this.getServiceDisplayName(selectedService)
  
-      /*await whatsappService.sendTextMessage(
-        user.phoneNumber,
-        `✅ Selected: ${serviceDisplayName}`
-      )*/
- 
+    
       await this.updateUserStep(user, this.STEPS.SLOT)
       await this.sendSlotMessage(user)
     } else {
@@ -622,18 +424,7 @@ class MessageController {
       await this.sendServiceMessage(user)
     }
   }
- 
- 
-  // Helper method to get display name for issue category
-  // getIssueDisplayName (issueId) {
-  //   const issueNames = {
-  //     frame_chain_pedal: 'Frame, Chain & Pedal',
-  //     tyre_tube_brake: 'Tyre, Tube & Brake',
-  //     other: 'Other Issues'
-  //   }
-  //   return issueNames[issueId] || issueId
-  // }
- 
+  
   getServiceDisplayName(serviceId) {
     const serviceNames = {
       basic_service: "Basic Service",
@@ -755,45 +546,60 @@ class MessageController {
     await this.updateUserStep(user, this.STEPS.LOCATION)
     await this.sendLocationMessage(user)
   }
- 
-  async handleStep5 (user, message) {
-    // Step 5: Location
-    const session = this.getUserSession(user.phoneNumber)
- 
-    if (message.type === 'location') {
-      const locationData = {
-        address: message.location.name || 'Shared Location',
-        coordinates: [message.location.longitude, message.location.latitude]
-      }
- 
-      session.location = locationData
-      user.currentRequest.location = locationData
- 
-      await this.updateUserStep(user, this.STEPS.SUMMARY)
-      await this.sendStepMessage(user, this.STEPS.SUMMARY)
-    } else if (message.type === 'text' || message.type === 'interactive') {
-      let text = ''
-      if (message.type === 'text') {
-        text = message.text.body.toLowerCase()
-      } else {
-        text = this.extractInteractiveResponse(message.interactive)
-      }
- 
-      if (text === 'location_manual') {
-        await whatsappService.sendTextMessage(
-          user.phoneNumber,
-          'Please type your complete address.'
-        )
-      } else if (text && text !== 'location_share') {
-        // Assume address input
-        session.location = { address: message.text.body, coordinates: [0, 0] }
-        user.currentRequest.location = session.location
- 
-        await this.updateUserStep(user, this.STEPS.SUMMARY)
-        await this.sendStepMessage(user, this.STEPS.SUMMARY)
-      }
+
+
+
+
+async handleStep5(user, message) {
+  const session = this.getUserSession(user.phoneNumber)
+
+  if (message.type === "location") {
+    const locationData = {
+      address: message.location.address || message.location.name || "Shared Location",
+      coordinates: [message.location.longitude, message.location.latitude]
+    }
+
+    session.location = locationData
+    user.currentRequest.location = locationData
+
+    await this.updateUserStep(user, this.STEPS.SUMMARY)
+    await this.sendStepMessage(user, this.STEPS.SUMMARY)
+    return
+  }
+
+  if (message.type === "interactive") {
+    const text = this.extractInteractiveResponse(message.interactive)
+
+    if (text === "location_manual") {
+      await whatsappService.sendTextMessage(
+        user.phoneNumber,
+        "📝 Please type your complete address."
+      )
+      return
+    }
+
+    if (text === "location_share") {
+      await whatsappService.sendTextMessage(
+        user.phoneNumber,
+        "📍 Please attach your location 📎"
+      )
+      return
     }
   }
+
+  if (message.type === "text" && message.text?.body) {
+    session.location = {
+      address: message.text.body,
+      coordinates: [null, null]
+    }
+
+    user.currentRequest.location = session.location
+
+    await this.updateUserStep(user, this.STEPS.SUMMARY)
+    await this.sendStepMessage(user, this.STEPS.SUMMARY)
+  }
+}
+
  
   async handleStep6 (user, text) {
     console.log('The text value inside HS6 is ' + text)
@@ -864,7 +670,7 @@ class MessageController {
   }
  
   async sendWelcomeMessage (user) {
-    console.log('INSIDE SENDWELCOMEMSG the user displayname is ' + user.displayName)
+    //console.log('INSIDE SENDWELCOMEMSG the user displayname is ' + user.displayName)
     const userName =
       user.displayName !== 'Customer' ? user.displayName : 'there'
     await whatsappService.sendTextMessage(
@@ -893,31 +699,6 @@ class MessageController {
     )
   }
  
-  // async sendBrandMessage (user) {
-  //   const brands = config.service?.brands || config.brands || []
- 
-  //   console.log('The brand value in sendBrandMessage is ' + brands)
- 
-  //   const sections = [
-  //     {
-  //       title: 'Select a Brand',
-  //       rows: brands.map(brand => ({
-  //         id: `brand_${brand.id}`,
-  //         title: `🚲 ${brand.name}`,
-  //         description: `Select ${brand.name}`
-  //       }))
-  //     }
-  //   ]
- 
-  //   await whatsappService.sendListMessage(
-  //     user.phoneNumber,
-  //     '🚴‍♂️ *Please select a brand*',
-  //     'Select Brand',
-  //     sections
-  //   )
-  // }
- 
-  // Changed to Choices - START
  
 async sendCategoryMessage(user) {
   const message = `📌 *Select your category:*`
@@ -936,54 +717,6 @@ async sendCategoryMessage(user) {
 }
 
 
-  /*
-  async sendCategoryMessage(user) {
-    const categories = config.service?.categories || config.categories || []
- 
-    const sections = [
-      {
-        title: 'Select your category',
-        rows: categories.map(category => ({
-          id: `category_${category.id}`,
-          title: `📌 ${category.name}`,
-          description: `Select ${category.name}`
-        }))
-      }
-    ]
- 
-    await whatsappService.sendListMessage(
-      user.phoneNumber,
-      '*Select your category*',
-      'Select Category',
-      sections
-    )
-  }
-  */
- 
-  // async sendIssueMessage (user) {
-  //   const session = this.getUserSession(user.phoneNumber)
-  //   const categoryName =
-  //     this.categoryMap[session.selectedCategory] || session.selectedCategory
-  //   const issues = config.service?.issues || config.issues || []
- 
-  //   const sections = [
-  //     {
-  //       title: `${categoryName} Issues`,
-  //       rows: issues.map(issue => ({
-  //         id: `issue_${issue.id}`,
-  //         title: `🔧 ${issue.name}`,
-  //         description: `Select for ${issue.name} service`
-  //       }))
-  //     }
-  //   ]
- 
-  //   await whatsappService.sendListMessage(
-  //     user.phoneNumber,
-  //     `🛠️ *Select Issue for ${categoryName}:*`,
-  //     'View Issues',
-  //     sections
-  //   )
-  // }
 
   async sendServiceMessage(user) {
     const message =
@@ -1165,7 +898,4 @@ async sendCategoryMessage(user) {
     return slots
   }
 }
-
-
 module.exports = new MessageController()
-
