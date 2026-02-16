@@ -815,15 +815,15 @@ async sendCategoryMessage(user) {
       this.serviceMap[session.selectedService] || session.selectedService
     const slotTime = session.selectedSlots?.[0]?.displayShort || 'Not selected'
     const location = session.location?.address || 'Not provided'
-    const parts = location.split(`|`)[1].split(`,`).map(s => s.trim());
-    const formattedLocation = location.split(`|`)[0].trim() + `\n` + parts.slice(0,3).join(`,`) + '\n' + parts.slice(3,5).join(`,`);
+    //const parts = location.split(`|`)[1].split(`,`).map(s => s.trim());
+    //const formattedLocation = location.split(`|`)[0].trim() + `\n` + parts.slice(0,3).join(`,`) + '\n' + parts.slice(3,5).join(`,`);
 
  
     const summary = `📋 *Booking Summary*\n
 🚲 *Category    :* ${categoryName}
 🔧 *Service Type:* ${serviceName}  
 📅 *Date/Time   :* ${slotTime}
-📍 *Address     :* ${formattedLocation}
+📍 *Address     :* ${location}
  
 *Please choose:*`
  
