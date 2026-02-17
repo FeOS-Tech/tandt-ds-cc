@@ -562,7 +562,7 @@ async handleStep5(user, message) {
   console.log('The MESSAGE JSON is ' + JSON.stringify(message))
   if (message.type === "location") {
     const locationData = {
-      address: message.location.name + `|` + message.location.address || message.location.name || "Shared Location",
+      address: message.location.name + `\n` + message.location.address || message.location.name || "Shared Location",
       coordinates: [message.location.longitude, message.location.latitude]
     }
 
