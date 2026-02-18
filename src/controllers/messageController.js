@@ -696,7 +696,7 @@ async handleStep5(user, message) {
       user.displayName !== 'Customer' ? user.displayName : 'there'
     await whatsappService.sendTextMessage(
       user.phoneNumber,
-      `*Dear ${userName},*\n\nSay *'Hi'* to start service booking`
+      `*Dear ${userName},*\n\nWelcome to Track & Trail Service@Home`
     )
   }
  
