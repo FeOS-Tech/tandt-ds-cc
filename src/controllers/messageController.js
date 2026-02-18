@@ -304,12 +304,12 @@ class MessageController {
       
       //NEW ADD
 
-      await this.sendWelcomeMessage(user)
-      /*await whatsappService.sendTextMessage(
+      //await this.sendWelcomeMessage(user)
+      await whatsappService.sendTextMessage(
         user.phoneNumber,
         `*Dear ${userName},*\n\nWelcome to Track & Trail Service@Home\n`
         
-      )*/
+      )
       await this.updateUserStep(user, this.STEPS.CONSENT)
       await this.sendStepMessage(user, this.STEPS.CONSENT)
       } else {
@@ -696,7 +696,7 @@ async handleStep5(user, message) {
       user.displayName !== 'Customer' ? user.displayName : 'there'
     await whatsappService.sendTextMessage(
       user.phoneNumber,
-      `*Dear ${userName},*\n\nWelcome to Track & Trail Service@Home`
+      `*Dear ${userName},*\n\nSay *'Hi'* to start service booking`
     )
   }
  
