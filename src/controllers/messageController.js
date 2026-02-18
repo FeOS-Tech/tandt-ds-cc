@@ -46,8 +46,9 @@ class MessageController {
   async handleMessage (message) {
     const from = message.from
     const messageType = message.type
- 
     const profileName = message?.contacts?.[0]?.profile?.name || null
+
+    console.log('INSIDE handleMessage') // NEWLY ADDED
  
     // Extract text from message
     let extractedText = ''
@@ -57,7 +58,7 @@ class MessageController {
     } else if (messageType === 'interactive' && message.interactive) {
       extractedText = this.extractInteractiveResponse(message.interactive)
     }
-    console.log('the extracted text is ' + extractedText)
+    console.log('INSIDE HANDLE MESSAGE, the extracted text is ' + extractedText) // NEWLY ADDED
  
     logger.info('Processing message', {
       from,
@@ -71,13 +72,18 @@ class MessageController {
  
       // Update display name for existing users
       if (user && profileName && user.displayName === 'Customer') {
+        console.log('INSIDE UPDATE DISPLAY NAME is ' + profileName) // NEWLY ADDED
         user.displayName = profileName
         await user.save()
       }
  
       if (!user) {
+        console.log('inside NOT USER') // NEWLY ADDED
         user = await this.createNewUser(from, message)
         await this.sendStepMessage(user, this.STEPS.WELCOME)
+        //NEW ADD
+        await this.updateUserStep(user, this.STEPS.CONSENT)
+        await this.sendStepMessage(user, this.STEPS.CONSENT)
         return
       }
  
@@ -286,6 +292,7 @@ class MessageController {
  
   // Step Handlers
   async handleStep0 (user, text) {
+    console.log('Inside HANDEL STEP 0') // NEWLY ADDED
     // Step 0: Welcome
     if (
       text.includes('hi') ||
@@ -294,11 +301,15 @@ class MessageController {
     ) {
       const userName =
       user.displayName !== 'Customer' ? user.displayName : 'there'
-      await whatsappService.sendTextMessage(
+      
+      //NEW ADD
+
+      await this.sendWelcomeMessage(user)
+      /*await whatsappService.sendTextMessage(
         user.phoneNumber,
-        `*Dear ${userName},*\n\nWelcome to Track & Trail Service@Home \n`
+        `*Dear ${userName},*\n\nWelcome to Track & Trail Service@Home\n`
         
-      )
+      )*/
       await this.updateUserStep(user, this.STEPS.CONSENT)
       await this.sendStepMessage(user, this.STEPS.CONSENT)
       } else {
@@ -610,7 +621,7 @@ async handleStep5(user, message) {
 
  
   async handleStep6 (user, text) {
-    console.log('The text value inside HS6 is ' + text)
+    console.log('The text value inside Handle Step 6 is ' + text)
     const session = this.getUserSession(user.phoneNumber)
  
     if (text === 'summary_confirm') {
@@ -647,6 +658,7 @@ async handleStep5(user, message) {
  
   async handleUnknownStep (user, text) {
     // If in unknown state, reset to Step 0
+    console.log('Inside Handle Unknow Step') // NEWLY ADDED
     await this.resetToStep(user, this.STEPS.WELCOME)
   }
  
@@ -678,12 +690,13 @@ async handleStep5(user, message) {
   }
  
   async sendWelcomeMessage (user) {
+    console.log('INSIDE SENDWELCOMEMSG the user displayname is ' + user.displayName) // NEWLY ADDED
     //console.log('INSIDE SENDWELCOMEMSG the user displayname is ' + user.displayName)
     const userName =
       user.displayName !== 'Customer' ? user.displayName : 'there'
     await whatsappService.sendTextMessage(
       user.phoneNumber,
-      `*Dear ${userName},*\n\nSay *'Hi'* to start service booking.`
+      `*Dear ${userName},*\n\nSay *'Hi'* to start service booking`
     )
   }
  
@@ -858,11 +871,12 @@ async sendCategoryMessage(user) {
   // Utility Methods
   async createNewUser (phoneNumber, message) {
     const profileName = message?.contacts?.[0]?.profile?.name || 'Customer'
+    console.log('Inside Create NEW USER')
     const user = new User({
       phoneNumber: phoneNumber,
       displayName: 'Customer',
       awaitingName: true,
-      conversationStep: this.STEPS.WELCOME,
+      conversationStep: this.STEPS.CONSENT,
       conversationState: 'new'
     })
  
