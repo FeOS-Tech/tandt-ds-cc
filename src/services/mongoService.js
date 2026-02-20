@@ -56,6 +56,12 @@ this.models.Counter = connection.model('Counter', counterSchema)
       },
       categoryName: { type: String, default: null },
       serviceType: { type: String, default: null },
+      selectedSlot: {
+        date: { type: String, default: null },
+        time: { type: String, default: null },
+        period: { type: String, default: null },
+        display: { type: String, default: null }
+      },
       customerAddress: { type: String, default: null },
       customerLocation: {
         latitude: { type: Number, default: null },
@@ -257,7 +263,14 @@ const service = new this.models.ServiceMaster({
         serviceType: this.getServiceType(session?.selectedService),
         userReported: userData.phoneNumber,
         customerAddress: session?.location?.address || null,
-
+        selectedSlot: session?.selectedSlots?.[0]
+          ? {
+              date: session.selectedSlots[0].dateDisplay,
+              time: session.selectedSlots[0].time,
+              period: session.selectedSlots[0].period,
+              display: session.selectedSlots[0].display
+            }
+          : null,
         customerLocation: {
           latitude: session?.location?.coordinates?.[1] || null,
           longitude: session?.location?.coordinates?.[0] || null
