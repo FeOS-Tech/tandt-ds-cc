@@ -254,11 +254,12 @@ class MessageController {
  
   async resetToStep (user, step) {
     // Clear session data
+    console.log("The VALUE of STEP is in RESET STEP = " + step)
     this.clearUserSession(user.phoneNumber)
  
     // Reset user data based on step
     if (step <= this.STEPS.CONSENT) {
-      user.consentGiven = false
+      //user.consentGiven = false
       user.consentTimestamp = null
     }
     if (step <= this.STEPS.CATEGORY) {
@@ -345,6 +346,18 @@ class MessageController {
       await this.sendCategoryMessage(user)
 
     } else if (text === 'consent_no') {
+      user.consentGiven = false
+      user.consentTimestamp = new Date()
+
+       try {
+        await mongoService.createOrUpdateUserMaster(user.phoneNumber, {
+          userConsent: false,
+          userProfileName: user.displayName
+        })
+      } catch (error) {
+        logger.error('Error saving consent to MongoDB:', error)
+      }
+
       await this.updateUserStep(user, this.STEPS.WELCOME)
  
       const userName =
@@ -642,19 +655,20 @@ async handleStep5(user, message) {
       }\n\nOur team will confirm the visit date/ time and our technician will call you before the visit.\n\nThank you for choosing Track and Trail, Service@Home.  🚴‍♂️`
  
       await whatsappService.sendTextMessage(user.phoneNumber, confirmation)
+      //await this.resetToStep(user, this.STEPS.WELCOME)
  
       // Clear session
       //this.clearUserSession(user.phoneNumber)
     } else if (text === 'summary_cancel') {
       await whatsappService.sendTextMessage(
         user.phoneNumber,
-        '❌ *Booking Cancelled*\n\nYour service request has been cancelled.\n\n🚲'
+        '❌ *🚲 Booking Cancelled*\n\nYour service request has been cancelled.'
       )
       //this.clearUserSession(user.phoneNumber)
+      
+    }
       await this.resetToStep(user, this.STEPS.WELCOME)
       this.clearUserSession(user.phoneNumber)
-    }
-      
   }
  
   async handleUnknownStep (user, text) {
